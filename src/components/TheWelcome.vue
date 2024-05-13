@@ -37,7 +37,7 @@
         <div class="col-6">
           <label>Tasa de interés (% Anual)</label>
           <div class="input-group mb-3">
-            <input  type="text" 
+            <input type="text" 
                     v-model="form.interest" 
                     class="form-control" 
                     placeholder="Recipient's username" 
@@ -60,15 +60,16 @@
       </div>
       <div>
         <div class="row" v-if="(monthly && income)">
-          <hr/>
-          <div class="col-4" >
-              <strong>Dividento mensual : {{ (monthly) ? monthly : '' }}</strong> 
-            </div>
-            <div class="col-4 offset-2">
-              <strong>Renta minima : {{ (income) ? income : '' }}</strong> 
-            </div>
-          <hr/>
-        </div>
+    <hr/>
+    <div class="col-4">
+        <strong>Dividendo mensual : {{ new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(monthly) }}</strong>
+    </div>
+    <div class="col-4 offset-2">
+        <strong>Renta mínima : {{ new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(income) }}</strong>
+    </div>
+    <hr/>
+</div>
+
       </div>
       <div class="col-auto">
       <button type="submit"  class="btn btn-primary mb-3"
@@ -81,12 +82,10 @@
           </ul>
       </p>
   <span class="loader push-right" v-if="isLoading"></span>
-  <WelcomeItem/>
+  <WelcomeItem @calcularPorBanco="calcularPorBanco"/>
   </div>
     </form>
   </div>
-  
-
 
 </template>
 <script>
@@ -101,7 +100,7 @@ export default {
       form:{
         propertyValue:"",
         at:"",
-        interest:"",
+        interest:5,
         selectedYear:"",
         years: [
           "5",
@@ -115,7 +114,8 @@ export default {
       errors: [],
       monthly:null,
       income:null,
-      monthsPeerYear:12
+      monthsPeerYear:12,
+      ufValue:38000
     };
   },
   computed: {
@@ -126,8 +126,39 @@ export default {
     
   },
   methods: {
+    calcularPorBanco(interest){
+      console.log(typeof interest, "type")
+      let porcentaje_sin_porcentaje = interest.replace('%', ''); // Eliminar el símbolo "%"
+      let porcentaje_numero = parseFloat(porcentaje_sin_porcentaje);
+
+      let valorFinalPropiedad = parseInt(this.form.propertyValue) - parseInt(this.form.at)
+      console.log(valorFinalPropiedad); 
+      let valorEnPesos = valorFinalPropiedad * this.ufValue
+      console.log(valorEnPesos);
+      let cuotas = parseInt(this.form.selectedYear) * 12
+      console.log(cuotas);
+      let dividendoSinIntereses = valorEnPesos / cuotas
+      console.log(dividendoSinIntereses);
+      let tasa = (dividendoSinIntereses * parseInt(porcentaje_numero)) / 100
+      console.log(tasa);
+      this.monthly = dividendoSinIntereses + tasa    
+      
+      this.income = this.monthly * 4
+    },
     calcularDividendo(){
-      console.log(this.form, "<<<<<<<")
+      let valorFinalPropiedad = parseInt(this.form.propertyValue) - parseInt(this.form.at)
+      console.log(valorFinalPropiedad); 
+      let valorEnPesos = valorFinalPropiedad * this.ufValue
+      console.log(valorEnPesos);
+      let cuotas = parseInt(this.form.selectedYear) * 12
+      console.log(cuotas);
+      let dividendoSinIntereses = valorEnPesos / cuotas
+      console.log(dividendoSinIntereses);
+      let tasa = (dividendoSinIntereses * parseInt(this.form.interest)) / 100
+      console.log(tasa);
+      this.monthly = dividendoSinIntereses + tasa    
+      
+      this.income = this.monthly * 4
       this.api(this.form)
     },
     ...mapActions({
@@ -156,6 +187,7 @@ export default {
   components: {
     WelcomeItem
   },
+
 }
 </script>
 

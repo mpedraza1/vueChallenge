@@ -23,7 +23,7 @@
             </button>
           </div>
         </div>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+        <a  @click="$emit('calcularPorBanco', d.tasaDeInteres)" class="btn btn-primary">Calcular con {{ d.banco.nombre }}</a>
       </div>
     </div>
   </div>
@@ -33,6 +33,7 @@
 import { mapGetters } from 'vuex';
 
 export default {
+  emits: ['calcularPorBanco'],
   data() {
     return {
       showMore: false // Estado para controlar si se muestra más contenido
