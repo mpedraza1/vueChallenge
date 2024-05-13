@@ -1,5 +1,9 @@
 <template>
-  <div class="col-12">
+  <div class="row">
+    <div class="col-4">
+
+    </div>
+    <div class="col-8">
     <form  id="app"
           @submit="checkForm"
           novalidate="true">
@@ -10,8 +14,8 @@
             <input  type="text" 
                     v-model="form.propertyValue" 
                     class="form-control" 
-                    placeholder="Recipient's username" 
-                    aria-label="Recipient's username"
+                    placeholder="Ingrese valor en UF" 
+                    aria-label="Ingrese valor en UF"
                     aria-describedby="basic-addon2">
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2"><strong>UF</strong></span>
@@ -24,8 +28,8 @@
             <input  type="text" 
                     v-model="form.at" 
                     class="form-control" 
-                    placeholder="Recipient's username" 
-                    aria-label="Recipient's username"
+                    placeholder="Ingrese pie en UF" 
+                    aria-label="Ingrese pie en UF"
                     aria-describedby="basic-addon2">
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2"><strong>UF</strong></span>
@@ -40,8 +44,8 @@
             <input type="text" 
                     v-model="form.interest" 
                     class="form-control" 
-                    placeholder="Recipient's username" 
-                    aria-label="Recipient's username"
+                    placeholder="Ingrese tasa de interés" 
+                    aria-label="Ingrese tasa de interés"
                     aria-describedby="basic-addon2">
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2"><strong>%</strong></span>
@@ -61,10 +65,10 @@
       <div>
         <div class="row" v-if="(monthly && income)">
     <hr/>
-    <div class="col-4">
+    <div class="col-4 resultados" >
         <strong>Dividendo mensual : {{ new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(monthly) }}</strong>
     </div>
-    <div class="col-4 offset-2">
+    <div class="col-4 offset-2 resultados" >
         <strong>Renta mínima : {{ new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(income) }}</strong>
     </div>
     <hr/>
@@ -72,7 +76,7 @@
 
       </div>
       <div class="col-auto">
-      <button type="submit"  class="btn btn-primary mb-3"
+      <button type="submit"   class="btn btn-outline-light mb-3"
       v-bind:disabled="isLoading"> <i>Calcular dividendo</i>   
       </button>      
       <p v-if="errors.length">
@@ -86,6 +90,8 @@
   </div>
     </form>
   </div>
+  </div>
+  
 
 </template>
 <script>
@@ -126,24 +132,26 @@ export default {
     
   },
   methods: {
-    calcularPorBanco(interest){
-      console.log(typeof interest, "type")
-      let porcentaje_sin_porcentaje = interest.replace('%', ''); // Eliminar el símbolo "%"
+    calcularPorBanco(ineteres){
+      console.log(ineteres, "type")
+      let porcentaje_sin_porcentaje = ineteres.replace('%', '');
+
       let porcentaje_numero = parseFloat(porcentaje_sin_porcentaje);
 
       let valorFinalPropiedad = parseInt(this.form.propertyValue) - parseInt(this.form.at)
-      console.log(valorFinalPropiedad); 
+
       let valorEnPesos = valorFinalPropiedad * this.ufValue
-      console.log(valorEnPesos);
+
       let cuotas = parseInt(this.form.selectedYear) * 12
-      console.log(cuotas);
+
       let dividendoSinIntereses = valorEnPesos / cuotas
-      console.log(dividendoSinIntereses);
+
       let tasa = (dividendoSinIntereses * parseInt(porcentaje_numero)) / 100
-      console.log(tasa);
+
       this.monthly = dividendoSinIntereses + tasa    
       
       this.income = this.monthly * 4
+
     },
     calcularDividendo(){
       let valorFinalPropiedad = parseInt(this.form.propertyValue) - parseInt(this.form.at)
@@ -170,14 +178,13 @@ export default {
       if (!this.form.propertyValue) {
         this.errors.push("El nombre valor de la propiedad es obligatorio.");
       }
-      if (!this.form.at) {
+      if (!this.form.at ) {
         this.errors.push('El pie es obligatorio.');
       } else if (!this.form.interest) {
         this.errors.push('El interés debe ser válido.');
       } else if (!this.form.selectedYear) {
         this.errors.push('El plazo es obligatorio.');
       }
-  
       if (!this.errors.length) {
         this.calcularDividendo()
         return true;
@@ -202,6 +209,14 @@ export default {
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
     }
+
+  label{
+    color: aliceblue;
+  }
+
+  .resultados{
+    color: aliceblue;
+  }
 
     @keyframes rotation {
     0% {

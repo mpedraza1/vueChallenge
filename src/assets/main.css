@@ -1,0 +1,8 @@
+body {
+    background-image: url('/public/w.webp'); /* Ruta de tu imagen */
+    background-size: cover; /* Ajusta el tamaño para cubrir completamente el contenedor */
+    background-position: center top; /* Centra la imagen horizontalmente y la coloca en la parte superior verticalmente */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    min-height: 100vh; /* Establece la altura mínima del cuerpo para ocupar al menos toda la altura de la ventana del navegador */
+    background-attachment: fixed; /* Mantiene la imagen de fondo fija en su posición mientras se desplaza el contenido */
+}

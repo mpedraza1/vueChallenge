@@ -37,15 +37,27 @@ export default createStore({
             Pie:form.at,
             Tiempo:form.selectedYear,
             Dfl2:true
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*',
         }}).then((response) => {
-          let data;
+          let data=[];
             if (response.data) {
-              data = Object.values(response.data).filter(d =>
-                d.costoTotal ||
-                d.gastosOperacionales ||
-                d.tasaDeInteres ||
-                (d.caracteristicas && d.caracteristicas.length > 0)
-              );
+
+              for (const bankKey in response.data) {
+                if (Object.hasOwnProperty.call(response.data, bankKey)) {
+                    const bankRecords = response.data[bankKey];
+                    if (Array.isArray(bankRecords)) {
+                        // Filtrar registros del banco actual
+                        const filteredRecords = bankRecords.filter(record =>
+                            record.tasaDeInteres &&
+                            (record.caracteristicas && record.caracteristicas.length > 0)
+                        );
+                        // Agregar los registros filtrados a la lista de datos
+                        data.push(...filteredRecords);
+                    }
+                }
+            }
             commit('setApiResponse', data);
                 
             } else {
